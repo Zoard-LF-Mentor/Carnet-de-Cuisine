@@ -17,6 +17,11 @@
     Object.assign(synonyms, metadata.synonymes || {});
   }
 
+  function unregisterPersonalRecipe(id) {
+    const index = recipes.findIndex((entry) => entry.recipe.identifiant === id && entry.metadata.owner === "Nathalie");
+    if (index >= 0) recipes.splice(index, 1);
+  }
+
   function minutes(recipe, field) {
     if (recipe[field] === null || recipe[field] === undefined || recipe[field] === "") return null;
     const value = Number(recipe[field]);
@@ -91,6 +96,8 @@
   }
 
   app.recipes = recipes;
+  app.registerRecipe = register;
+  app.unregisterPersonalRecipe = unregisterPersonalRecipe;
   app.normalize = normalize;
   app.escape = escape;
   app.minutes = minutes;

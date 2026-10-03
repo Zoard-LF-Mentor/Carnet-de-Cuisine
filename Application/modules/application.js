@@ -30,6 +30,63 @@
     const control = target.closest("[data-action]");
     if (!control) return;
     const { action, id, name, index } = control.dataset;
+    if (action === "connect-nathalie-recipes") {
+      app.personalRecipeStore.connect().then(() => {
+        app.nathalieEditor.message = "Le fichier de recettes de Nathalie est prêt. Les modifications seront enregistrées dans ce dossier.";
+        render();
+      }).catch((error) => {
+        app.nathalieEditor.message = error.name === "AbortError" ? "Choix du dossier annulé." : error.message;
+        render();
+      });
+      return;
+    }
+    if (action === "copy-nathalie-prompt") {
+      navigator.clipboard.writeText(app.makeNathaliePrompt(app.nathalieEditor.sourceText)).then(() => {
+        app.nathalieEditor.message = "La demande est copiée. Collez-la dans ChatGPT, puis copiez sa réponse JSON ici.";
+        render();
+      }).catch(() => {
+        app.nathalieEditor.message = "La copie automatique est indisponible. Sélectionnez et copiez le texte de la recette, puis ajoutez-le à la demande ChatGPT.";
+        render();
+      });
+      return;
+    }
+    if (action === "save-nathalie-recipe") {
+      if (!app.nathalieEditor.pendingRecipe) return;
+      app.personalRecipeStore.add(app.nathalieEditor.pendingRecipe).then(() => {
+        app.nathalieEditor.sourceText = "";
+        app.nathalieEditor.responseText = "";
+        app.nathalieEditor.pendingRecipe = null;
+        app.nathalieEditor.message = "Recette ajoutée et sauvegardée dans le dossier de Nathalie.";
+        app.saveState();
+        render();
+      }).catch((error) => {
+        app.nathalieEditor.message = error.message;
+        render();
+      });
+      return;
+    }
+    if (action === "remove-nathalie-recipe") {
+      if (!window.confirm("Retirer cette recette du carnet de Nathalie? Une copie datée sera conservée dans Sauvegardes.")) return;
+      app.personalRecipeStore.remove(id).then(() => {
+        app.nathalieEditor.message = "Recette retirée. La sauvegarde précédente est conservée.";
+        render();
+      }).catch((error) => {
+        app.nathalieEditor.message = error.message;
+        render();
+      });
+      return;
+    }
+    if (action === "restore-nathalie-backup") {
+      if (!window.confirm("Remplacer la collection actuelle par la dernière copie? L’état actuel sera d’abord sauvegardé.")) return;
+      app.personalRecipeStore.restoreLatest().then(() => {
+        app.nathalieEditor.message = "La dernière copie a été restaurée. L’état précédent a aussi été sauvegardé.";
+        render();
+      }).catch((error) => {
+        app.nathalieEditor.message = error.message;
+        render();
+      });
+      return;
+    }
     if (action === "open-selector") { openSelector(); return; }
     if (action === "toggle-filters") { state.filtersCollapsed = !state.filtersCollapsed; app.saveState(); render(); return; }
     if (action === "detail") { openRecipe(id); return; }
@@ -84,6 +141,18 @@
     const kind = form.dataset.form;
     if (!kind) return;
     event.preventDefault();
+    if (kind === "nathalie-recipe-import") {
+      try {
+        app.nathalieEditor.responseText = String(new FormData(form).get("recipe-json") || "");
+        app.nathalieEditor.pendingRecipe = app.personalRecipeStore.prepare(app.nathalieEditor.responseText);
+        app.nathalieEditor.message = "Vérifiez le nom, les ingrédients et les étapes avant de confirmer l’ajout.";
+      } catch (error) {
+        app.nathalieEditor.pendingRecipe = null;
+        app.nathalieEditor.message = error.message;
+      }
+      render();
+      return;
+    }
     const value = new FormData(form).get("ingredient");
     if (kind === "preparation-group") {
       const name = String(new FormData(form).get("group") || "").trim();
@@ -100,6 +169,10 @@
   });
 
   root.addEventListener("input", (event) => {
+    if (event.target instanceof HTMLTextAreaElement && event.target.matches("[data-nathalie-draft]")) {
+      app.nathalieEditor[event.target.dataset.nathalieDraft] = event.target.value;
+      return;
+    }
     if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-search]")) return;
     state.search = event.target.value;
     app.saveState();
@@ -299,6 +372,7 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     await loadRecipeScripts();
+    await app.personalRecipeStore.initialize();
     if (app.state.view === "planifiees" || app.state.view === "comparaison") app.state.view = "recettes";
     render();
   }, { once: true });

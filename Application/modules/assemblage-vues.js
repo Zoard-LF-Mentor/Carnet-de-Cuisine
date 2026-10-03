@@ -11,6 +11,8 @@
         ? app.renderPreparationView()
       : view === "guide"
         ? app.renderGuideView()
+      : view === "nathalie"
+        ? app.renderNathalieView()
         : app.renderRecipesView();
     root.innerHTML = `${app.viewUtils.navigation()}${content}`;
     requestAnimationFrame(() => window.scrollTo({ left: scrollX, top: scrollY, behavior: "instant" }));

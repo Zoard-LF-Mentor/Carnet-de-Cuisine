@@ -30,6 +30,12 @@ Modifier les portions recalcule les quantités numériques au prorata, arrondies
 
 Sur une carte, « Préparer + » ajoute ou retire la recette du plan. La page « Préparation » présente les recettes choisies et regroupe les ingrédients portant le même nom. Cochez « Prêt » pour suivre l’avancement; créez des groupes pour organiser le travail, puis glissez-y les ingrédients ou choisissez leur groupe dans le menu. Développer une carte montre les quantités séparément par recette, sans additionner des unités qui pourraient être différentes. Pour chaque ingrédient manquant, cochez « Ajouter au garde-manger » ou « Ajouter à l’épicerie ». Un ingrédient déjà au garde-manger peut en être retiré directement depuis sa carte.
 
+### Recettes de Nathalie
+
+Dans l’onglet « Nathalie », choisir « Documents » au premier démarrage. L’application y crée `À table/recettes-nathalie.json` et y enregistre ses recettes; une copie datée est conservée dans `À table/Sauvegardes` avant chaque modification. Si le navigateur demande à nouveau l’autorisation, reconnecter le dossier Documents. Ces fichiers sont indépendants du cache et des données du navigateur; ils peuvent aussi être inclus dans une sauvegarde OneDrive.
+
+Pour une nouvelle recette, coller le texte d’origine, copier la demande préparée dans ChatGPT, puis coller sa réponse JSON et choisir « Vérifier la recette ». Relire l’aperçu et confirmer l’enregistrement. La fiche validée est ajoutée à la collection de Nathalie et à la recherche générale. Cette sauvegarde directe par fichier fonctionne avec une version récente de Microsoft Edge ou Google Chrome.
+
 ## À garder en tête
 
 Les préférences alimentaires reposent sur les étiquettes des recettes; elles ne constituent ni une garantie médicale ni une certification. Toujours vérifier les ingrédients et les allergènes sur les emballages.

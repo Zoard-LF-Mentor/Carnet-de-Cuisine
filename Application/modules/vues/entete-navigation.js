@@ -5,7 +5,7 @@
   }
 
   function navigation() {
-    const tabs = [["recettes", "01", "Recettes"], ["preparation", "02", "Préparer"], ["epicerie", "03", "Épicerie"], ["guide", "04", "Guide"]];
+    const tabs = [["recettes", "01", "Recettes"], ["preparation", "02", "Préparer"], ["epicerie", "03", "Épicerie"], ["nathalie", "04", "Nathalie"], ["guide", "05", "Guide"]];
     return `<nav class="navigation-principale" aria-label="Navigation principale">${tabs.map(([view, number, name]) => `<button type="button" class="onglet-navigation ${app.state.view === view ? "actif" : ""}" data-view="${view}" aria-current="${app.state.view === view ? "page" : "false"}"><span>${number}</span>${name}${view === "preparation" && app.state.recipesToPrepare.length ? `<b>${app.state.recipesToPrepare.length}</b>` : ""}</button>`).join("")}</nav>`;
   }
 
