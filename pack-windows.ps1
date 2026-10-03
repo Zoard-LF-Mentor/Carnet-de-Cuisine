@@ -4,7 +4,8 @@ $root = $PSScriptRoot
 $distribution = Join-Path $root "dist"
 $archive = Join-Path $distribution "AtTable-Windows.zip"
 $staging = Join-Path $env:TEMP ("AtTable-Windows-" + [guid]::NewGuid().ToString("N"))
-$folders = @("Application", "Apparence", "Donnees", "Images")
+$folders = @("Application", "Apparence", "Images")
+$dataFolders = @("Recettes")
 $files = @("index.html", "apparence.css", "AtTable.exe", "GUIDE.md", "README.md")
 
 & (Join-Path $root "build-windows.ps1")
@@ -18,6 +19,12 @@ try {
 
     foreach ($folder in $folders) {
         Copy-Item -Path (Join-Path $root $folder) -Destination $staging -Recurse
+    }
+
+    $dataStaging = Join-Path $staging "Donnees"
+    New-Item -ItemType Directory -Path $dataStaging | Out-Null
+    foreach ($folder in $dataFolders) {
+        Copy-Item -Path (Join-Path $root "Donnees\$folder") -Destination $dataStaging -Recurse
     }
 
     if (Test-Path $archive) {

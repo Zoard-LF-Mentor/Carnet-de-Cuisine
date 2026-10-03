@@ -1,5 +1,6 @@
 .venv/
 dist/
+/Donnees/nathalie recette/
 bin/
 obj/
 .vs/

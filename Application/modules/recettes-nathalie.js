@@ -166,6 +166,7 @@
     await ensureWritePermission(directory);
     const recipes = await readRecipes(directory);
     await handleTransaction("readwrite", (store) => store.put(directory, handleKey));
+    for (const recipe of state.recipes) app.unregisterPersonalRecipe(recipe.identifiant);
     state.directory = directory;
     state.recipes = recipes;
     state.status = "connected";
@@ -226,6 +227,7 @@
     app.unregisterPersonalRecipe(id);
     app.state.favorites = app.state.favorites.filter((favorite) => favorite !== id);
     app.state.recipesToPrepare = app.state.recipesToPrepare.filter((recipeId) => recipeId !== id);
+    app.saveState();
   }
 
   async function restoreLatest() {
@@ -244,6 +246,10 @@
     for (const recipe of state.recipes) app.unregisterPersonalRecipe(recipe.identifiant);
     state.recipes = data.recettes;
     registerAll();
+    const restoredIds = new Set(state.recipes.map((recipe) => recipe.identifiant));
+    app.state.favorites = app.state.favorites.filter((id) => !id.startsWith("nathalie-") || restoredIds.has(id));
+    app.state.recipesToPrepare = app.state.recipesToPrepare.filter((id) => !id.startsWith("nathalie-") || restoredIds.has(id));
+    app.saveState();
   }
 
   app.personalRecipeStore = { state, prepare: prepareRecipe, connect, initialize, add, remove, restoreLatest, dataFolderName };
