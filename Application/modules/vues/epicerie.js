@@ -1,0 +1,11 @@
+(function (app) {
+  const e = app.escape;
+  const { pantry } = app;
+
+  function renderGroceryView() {
+    const articles = pantry.shopping.map((item, index) => `<li class="article-epicerie"><label><input type="checkbox" data-shopping-check="${index}" ${item.checked ? "checked" : ""}><span class="nom-article">${e(item.name)}</span></label><button type="button" class="retirer-article-epicerie" data-action="remove-shopping" data-index="${index}" aria-label="Retirer ${e(item.name)}">×</button></li>`).join("");
+    return `<section class="vue-epicerie contenu-vue">${app.viewUtils.pageHeader("Cuisine organisée", "Épicerie", "Votre inventaire et votre liste d’achats, séparés de la planification.")}<div class="disposition-epicerie"><section class="section-inventaire-epicerie"><h2>Dans le garde-manger</h2><form class="formulaire-garde-manger" data-form="pantry"><label class="texte-masque" for="ajout-garde-manger-epicerie">Ajouter un ingrédient</label><input id="ajout-garde-manger-epicerie" name="ingredient" placeholder="Ajouter un ingrédient" required><button class="bouton-icone" type="submit" aria-label="Ajouter">+</button></form><button class="bouton-explorer-ingredients" type="button" data-action="open-selector">Explorer les ingrédients</button><div class="pastilles-garde-manger">${app.ingredientPills()}</div></section><section class="section-liste-epicerie"><h2>Liste d’achats</h2><form class="formulaire-garde-manger" data-form="shopping"><label class="texte-masque" for="ajout-epicerie">Ajouter à la liste</label><input id="ajout-epicerie" name="ingredient" placeholder="Ajouter un article" required><button class="bouton-icone" type="submit" aria-label="Ajouter à la liste">+</button></form><ul class="liste-epicerie">${articles || `<li class="epicerie-vide"><span aria-hidden="true">✓</span><p>Votre liste est vide.</p></li>`}</ul><div class="actions-epicerie"><button class="bouton-secondaire" type="button" data-action="clear-shopping" ${articles ? "" : "disabled"}>Vider la liste</button><button class="bouton-discret" type="button" data-action="export-shopping">Exporter en CSV</button></div></section></div></section>`;
+  }
+
+  app.renderGroceryView = renderGroceryView;
+})(window.AtTable = window.AtTable || {});

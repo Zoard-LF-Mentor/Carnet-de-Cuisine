@@ -1,0 +1,85 @@
+﻿@media (max-width: 1100px) {
+	.grille-recettes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.barre-outils { flex-wrap: wrap; }
+	.champ-recherche { flex-basis: 100%; }
+	.barre-outils .etiquette-selection { flex: 1 1 150px; }
+}
+
+@media (max-width: 760px) {
+	.entete-site { min-height: 65px; gap: 13px; padding-inline: 18px; }
+	.bouton-guide-entete { padding: 6px 9px 6px 6px; font-size: 11px; }
+	.bouton-guide-entete { margin-right: 0; }
+	.navigation-principale { height: 54px; gap: 22px; }
+	.espace-travail { grid-template-columns: 1fr; gap: 27px; padding-top: 22px; }
+	.espace-travail.filtres-replies { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+	.panneau-filtres-principal { display: block; padding: 0; border: 0; }
+	.panneau-replie { width: auto; }
+	.panneau-replie .bouton-replier-filtres { margin: 0 0 0 auto; }
+	.contenu-panneau-filtres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px 18px; padding-top: 15px; }
+	.section-laterale { padding: 0 0 18px; margin: 0; }
+	.section-laterale:last-child { grid-column: 1 / -1; }
+	.section-laterale .groupe-filtres:last-child { margin-top: 12px; }
+	.entete-page { padding-top: 0; }
+	.entete-page h1 { font-size: 40px; }
+	.repere-entete { padding-inline: 7px; }
+	.disposition-epicerie { grid-template-columns: 1fr; gap: 25px; }
+	.grille-selecteur-ingredients { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+	.tuile-ingredient { min-height: 96px; padding: 8px; }
+	.entete-selecteur-ingredients { align-items: start; }
+	.compteur-selecteur { gap: 6px; padding: 6px 8px; }
+	.pied-site { padding-inline: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.espace-travail, .contenu-vue { animation: none; transition: none; }
+}
+
+@media (max-width: 480px) {
+	.entete-site { min-height: 68px; gap: 8px; padding-inline: 14px; }
+	.nom-marque { font-size: 23px; }
+	.signature-marque { font-size: 8px; }
+	.symbole-marque { width: 42px; height: 42px; }
+	.bouton-guide-entete { gap: 6px; padding: 5px; font-size: 0; }
+	.bouton-guide-entete > span { width: 21px; height: 21px; }
+	.navigation-principale { justify-content: space-between; gap: 8px; }
+	.onglet-navigation { flex: 0 0 auto; gap: 5px; font-size: 11px; white-space: nowrap; }
+	.espace-travail { gap: 18px; }
+	.contenu-panneau-filtres { grid-template-columns: 1fr 1fr; gap: 12px; }
+	.titre-lateral { gap: 7px; }
+	.titre-lateral h2 { font-size: 16px; }
+	.liste-options { grid-template-columns: 1fr; }
+	.entete-page { align-items: start; gap: 8px; padding-bottom: 18px; }
+	.entete-page h1 { font-size: 34px; }
+	#fenetre-selecteur-ingredients { width: calc(100% - 16px); max-height: 94vh; }
+	.contenu-selecteur-ingredients { padding: 30px 14px 18px; }
+	.entete-selecteur-ingredients { gap: 8px; padding-right: 32px; padding-bottom: 14px; }
+	.entete-selecteur-ingredients h2 { font-size: 27px; }
+	.compteur-selecteur { flex-direction: column; align-items: center; gap: 0; padding: 5px; }
+	.compteur-selecteur > span { font-size: 8px; text-align: center; }
+	.grille-selecteur-ingredients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.chapitre-guide { grid-template-columns: 28px minmax(0, 1fr); gap: 10px; padding-block: 17px; }
+	.chapitre-guide h2 { font-size: 20px; }
+	.sous-titre-page { font-size: 11px; }
+	.repere-entete { gap: 5px; margin-top: 5px; }
+	.repere-entete > span { font-size: 23px; }
+	.barre-outils .etiquette-selection { flex-basis: 100%; }
+	.filtre-favoris { padding: 5px 0; }
+	.grille-recettes { grid-template-columns: 1fr; gap: 12px; }
+	.image-recette { aspect-ratio: 1.9; }
+	.corps-carte-recette { padding-inline: 12px; }
+	.resume-resultats { align-items: baseline; font-size: 10px; }
+	.etat-vide { padding: 48px 17px; }
+	.actions-epicerie { gap: 8px; }
+	.actions-epicerie .bouton-principal, .actions-epicerie .bouton-secondaire { padding: 9px 10px; font-size: 10px; }
+	.actions-epicerie .bouton-discret { margin-left: 0; }
+	.colonnes-fenetre { grid-template-columns: 1fr; gap: 24px; }
+	.contenu-fenetre-recette h2 { font-size: 29px; }
+	.pied-site { padding-inline: 14px; }
+}
+
+@media print {
+	body { background: white; }
+	.entete-site, .pied-site, .navigation-principale, .panneau-filtres-principal, .entete-page, .actions-epicerie { display: none !important; }
+	.espace-travail { display: block; padding: 0; }
+	.article-epicerie { min-height: 34px; }
+}

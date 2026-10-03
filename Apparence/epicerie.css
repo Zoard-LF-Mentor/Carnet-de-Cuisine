@@ -1,0 +1,19 @@
+﻿.vue-epicerie { max-width: 1180px; }
+.disposition-epicerie { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.section-inventaire-epicerie, .section-liste-epicerie { min-width: 0; padding-top: 18px; border-top: 1px solid var(--trait); }
+.section-inventaire-epicerie > h2, .section-liste-epicerie h2 { margin: 0; font-family: var(--police-serif); font-size: 22px; font-weight: 400; }
+.section-inventaire-epicerie > .section-laterale { padding-top: 4px; margin-top: 14px; }
+.section-inventaire-epicerie > .texte-estompe { max-width: 360px; margin: 10px 0 0; }
+.section-liste-epicerie > .liste-epicerie { margin-top: 15px; }
+.retirer-article-epicerie { width: 30px; height: 30px; flex: 0 0 auto; border: 0; background: transparent; color: var(--texte-estompe); font-size: 19px; cursor: pointer; }
+.retirer-article-epicerie:hover { color: var(--corail); }
+.liste-epicerie { padding: 0; margin: 0; list-style: none; border-top: 1px solid var(--trait); }
+.article-epicerie { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 39px; border-bottom: 1px solid var(--trait); font-size: 11px; }
+.article-epicerie label { display: flex; align-items: center; gap: 9px; min-width: 0; cursor: pointer; }
+.article-epicerie input { width: 15px; height: 15px; accent-color: var(--vert); cursor: pointer; }
+.nom-article { overflow-wrap: anywhere; }
+.actions-epicerie { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 14px; padding-top: 15px; }
+.actions-epicerie .bouton-discret { margin-left: auto; }
+.epicerie-vide { display: flex; align-items: center; gap: 10px; padding: 17px 0 0; color: var(--vert); }
+.epicerie-vide > span { width: 23px; height: 23px; display: grid; place-items: center; border-radius: 50%; background: var(--vert-doux); }
+.epicerie-vide p { margin: 0; font-size: 11px; }

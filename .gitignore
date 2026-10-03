@@ -1,0 +1,8 @@
+.venv/
+dist/
+bin/
+obj/
+.vs/
+*.user
+Thumbs.db
+.DS_Store

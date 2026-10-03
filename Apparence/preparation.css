@@ -1,0 +1,95 @@
+.vue-preparation { max-width: 1320px; margin-inline: auto; }
+.section-recettes-preparees { padding: 0 0 22px; border-bottom: 1px solid var(--trait); }
+.entete-recettes-plan, .entete-ingredients-plan { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 22px; }
+.entete-recettes-plan h2, .entete-ingredients-plan h2 { margin: 0; font-family: var(--police-serif); font-size: 25px; font-weight: 400; }
+.entete-recettes-plan h2 > span { display: inline-grid; min-width: 27px; height: 27px; place-items: center; margin-left: 5px; border-radius: 50%; background: var(--vert-doux); color: var(--vert); font-family: var(--police-sans); font-size: 12px; vertical-align: middle; }
+.entete-recettes-plan .surtitre, .entete-ingredients-plan .surtitre { margin-bottom: 5px; }
+.entete-recettes-plan > .bouton-discret { color: #8a402c; }
+.liste-recettes-preparees { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr)); gap: 10px; padding: 0; margin: 15px 0 0; list-style: none; }
+.carte-recette-plan { display: grid; grid-template-columns: 34px minmax(0, 1fr) 34px; align-items: center; gap: 10px; min-width: 0; padding: 12px; border: 1px solid var(--trait); border-left: 3px solid var(--corail); background: var(--surface); }
+.numero-recette-plan { color: var(--corail); font-family: var(--police-serif); font-size: 17px; }
+.infos-recette-plan { display: grid; gap: 4px; min-width: 0; }
+.infos-recette-plan > span { color: var(--texte-estompe); font-size: 9px; }
+.recette-preparee-nom { width: fit-content; max-width: 100%; padding: 0; border: 0; background: transparent; color: var(--vert); font-family: var(--police-serif); font-size: 17px; line-height: 1.2; text-align: left; cursor: pointer; }
+.recette-preparee-nom:hover { color: var(--corail); }
+.retirer-recette-preparee, .bouton-retirer-groupe { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid transparent; background: transparent; color: var(--texte-estompe); font-size: 19px; cursor: pointer; }
+.retirer-recette-preparee:hover, .bouton-retirer-groupe:hover { border-color: #e6b6a7; background: #fbede7; color: #8a402c; }
+.resume-preparation { display: grid; grid-template-columns: minmax(200px, .8fr) minmax(0, 1.2fr); gap: 24px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--trait); }
+.progression-preparation > div { display: flex; align-items: baseline; gap: 8px; }
+.progression-preparation > div strong { color: var(--vert); font-family: var(--police-serif); font-size: 26px; font-weight: 400; }
+.progression-preparation > div span { color: var(--texte-estompe); font-size: 11px; }
+.progression-preparation progress { display: block; width: 100%; height: 7px; margin-top: 6px; overflow: hidden; border: 0; border-radius: 8px; background: #dfe4da; accent-color: var(--vert); }
+.progression-preparation progress::-webkit-progress-bar { border-radius: 8px; background: #dfe4da; }
+.progression-preparation progress::-webkit-progress-value { border-radius: 8px; background: var(--vert); transition: width .18s ease; }
+.progression-preparation progress::-moz-progress-bar { border-radius: 8px; background: var(--vert); }
+.compteurs-preparation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 1px solid var(--trait); }
+.compteurs-preparation > div { display: grid; gap: 2px; padding: 0 15px; border-right: 1px solid var(--trait); }
+.compteurs-preparation strong { color: var(--encre); font-family: var(--police-serif); font-size: 21px; font-weight: 400; }
+.compteurs-preparation span { color: var(--texte-estompe); font-size: 9px; }
+.section-ingredients-preparees { padding-top: 19px; }
+.entete-ingredients-plan { align-items: center; }
+.entete-ingredients-plan > div > p { margin: 0 0 5px; }
+.formulaire-groupe-preparation { display: flex; width: min(100%, 280px); min-height: 38px; }
+.formulaire-groupe-preparation input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--trait); border-right: 0; border-radius: 0; background: var(--surface); font-size: 11px; }
+.formulaire-groupe-preparation button { width: 40px; flex: 0 0 auto; border: 1px solid var(--vert); background: var(--vert); color: white; font-size: 21px; cursor: pointer; }
+.formulaire-groupe-preparation button:hover { background: #23694f; }
+.formulaire-groupe-preparation input:focus-visible, .formulaire-groupe-preparation button:focus-visible { outline: 2px solid var(--corail); outline-offset: 2px; }
+.aide-glisser-plan { margin: 7px 0 15px; color: var(--texte-estompe); font-size: 10px; }
+.tableau-ingredients-plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); align-items: start; gap: 15px; }
+.groupe-ingredients-plan { min-width: 0; padding: 13px; border: 1px solid var(--trait); background: #f6f7f1; transition: border-color .15s ease, background-color .15s ease; }
+.groupe-ingredients-plan.zone-depot-active { border-color: var(--vert); background: #e9f0e5; box-shadow: inset 0 0 0 1px var(--vert); }
+.entete-groupe-plan { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; padding-bottom: 9px; border-bottom: 1px solid var(--trait); }
+.entete-groupe-plan h3 { margin: 0; font-family: var(--police-serif); font-size: 17px; font-weight: 400; }
+.entete-groupe-plan > div > span { display: block; margin-top: 3px; color: var(--texte-estompe); font-size: 9px; }
+.zone-depot-vide { display: grid; min-height: 105px; place-items: center; padding: 12px; margin: 10px 0 0; border: 1px dashed #bdc8b9; color: var(--texte-estompe); font-size: 10px; text-align: center; }
+.grille-ingredients-plan { display: grid; gap: 8px; padding: 10px 0 0; margin: 0; list-style: none; }
+.carte-ingredient-plan { min-width: 0; padding: 11px; border: 1px solid #dfe3db; border-left: 3px solid #c5cdc0; background: var(--surface); transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease; cursor: grab; }
+.carte-ingredient-plan:hover { border-color: #aab9a7; box-shadow: 0 3px 11px #18362d0d; }
+.carte-ingredient-plan.ingredient-plan-pret { border-left-color: var(--vert); background: #f2f6ef; }
+.carte-ingredient-plan.ingredient-en-deplacement { opacity: .42; cursor: grabbing; }
+.entete-ingredient-plan { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.poignee-deplacement { color: #8a978a; font-size: 17px; line-height: 1; cursor: grab; }
+.identite-ingredient-plan { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px 10px; min-width: 0; }
+.identite-ingredient-plan h4 { margin: 0; overflow-wrap: anywhere; color: var(--encre); font-size: 14px; font-weight: 650; line-height: 1.25; }
+.statut-ingredient-plan { padding: 3px 6px; border: 1px solid #e5c7a6; background: #fbf2e5; color: #75562f; font-size: 8px; white-space: nowrap; }
+.statut-disponible { border-color: #c8d8c4; background: #eaf2e6; color: var(--vert); }
+.statut-liste { border-color: #d6d1b7; background: #f3f0df; color: #645a2c; }
+.case-ingredient-pret { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border: 1px solid var(--trait); color: var(--texte-estompe); font-size: 10px; cursor: pointer; }
+.case-ingredient-pret:has(input:checked) { border-color: var(--vert); background: var(--vert); color: white; }
+.case-ingredient-pret input { width: 14px; height: 14px; margin: 0; accent-color: var(--vert); }
+.actions-ingredient-plan { min-height: 29px; margin: 7px 0 3px 26px; }
+.actions-destination-ingredient { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.actions-destination-ingredient label { display: inline-flex; align-items: center; gap: 5px; color: var(--vert); font-size: 10px; cursor: pointer; }
+.actions-destination-ingredient input { width: 14px; height: 14px; margin: 0; accent-color: var(--vert); }
+.action-retirer-garde-manger { padding: 3px 0; border: 0; background: transparent; color: #8a402c; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; }
+.action-retirer-garde-manger:hover { color: var(--corail); }
+.outils-ingredient-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 14px; padding-top: 8px; margin-left: 26px; border-top: 1px solid #eef0ea; }
+.outils-ingredient-plan > label { display: flex; align-items: center; gap: 6px; color: var(--texte-estompe); font-size: 9px; }
+.outils-ingredient-plan select { max-width: 150px; padding: 5px 23px 5px 7px; border: 1px solid var(--trait); background: white; color: var(--encre); font-size: 9px; }
+.utilisations-ingredient { color: var(--texte-estompe); font-size: 9px; }
+.utilisations-ingredient summary { width: fit-content; cursor: pointer; }
+.utilisations-ingredient summary:hover { color: var(--vert); }
+.utilisations-ingredient ul { display: grid; gap: 5px; padding: 7px 0 0 12px; margin: 0; list-style: none; }
+.utilisations-ingredient li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 12px; color: var(--texte-estompe); font-size: 9px; }
+.utilisations-ingredient li strong { color: var(--encre); font-size: 10px; font-weight: 500; }
+.vue-preparation .etat-vide { margin-top: 14px; }
+.vue-preparation .etat-vide h2 { margin: 0; font-family: var(--police-serif); font-size: 25px; font-weight: 400; }
+.vue-preparation .etat-vide .bouton-secondaire { margin-top: 15px; }
+
+@media (max-width: 760px) {
+  .resume-preparation { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+  .compteurs-preparation { padding-top: 12px; border-top: 1px solid var(--trait); border-left: 0; }
+  .compteurs-preparation > div { padding-inline: 10px; }
+  .compteurs-preparation > div:first-child { padding-left: 0; }
+}
+@media (max-width: 480px) {
+  .liste-recettes-preparees { grid-template-columns: minmax(0, 1fr); }
+  .carte-recette-plan { grid-template-columns: 26px minmax(0, 1fr) 30px; gap: 7px; padding: 10px; }
+  .recette-preparee-nom { font-size: 15px; }
+  .entete-ingredients-plan { align-items: start; }
+  .formulaire-groupe-preparation { width: 100%; }
+  .tableau-ingredients-plan { grid-template-columns: minmax(0, 1fr); }
+  .entete-ingredient-plan { grid-template-columns: 15px minmax(0, 1fr) auto; gap: 6px; }
+  .identite-ingredient-plan { display: grid; gap: 5px; }
+  .outils-ingredient-plan { margin-left: 21px; }
+}

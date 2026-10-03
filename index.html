@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f2eb">
+  <title>À table | Votre cuisine, vos idées</title>
+  <link rel="stylesheet" href="apparence.css">
+  <script src="Donnees/Recettes/manifeste.js" defer></script>
+  <script src="Application/modules/etat.js" defer></script>
+  <script src="Application/modules/catalogue-recettes.js" defer></script>
+  <script src="Application/modules/vues/entete-navigation.js" defer></script>
+  <script src="Application/modules/vues/liste-recettes.js" defer></script>
+  <script src="Application/modules/vues/epicerie.js" defer></script>
+  <script src="Application/modules/vues/preparation.js" defer></script>
+  <script src="Application/modules/vues/guide.js" defer></script>
+  <script src="Application/modules/vues/selecteur-ingredients.js" defer></script>
+  <script src="Application/modules/vues/fiche-recette.js" defer></script>
+  <script src="Application/modules/assemblage-vues.js" defer></script>
+  <script src="Application/modules/application.js" defer></script>
+</head>
+<body>
+  <div id="racine-application">
+    <header class="entete-site">
+      <a class="marque" href="#recettes" aria-label="À table, carnet de cuisine">
+        <img class="symbole-marque" src="Images/photo-profil-zoard.png" alt="" aria-hidden="true">
+        <span class="bloc-marque"><span class="nom-marque">À table<span>.</span></span><span class="signature-marque">Carnet de cuisine</span></span>
+      </a>
+      <button id="bouton-guide-entete" class="bouton-guide-entete" type="button" aria-pressed="false" title="Ouvrir le guide (raccourci : ?)" data-vue="guide"><span aria-hidden="true">?</span>Guide</button>
+    </header>
+    <main id="contenu-principal" tabindex="-1">
+      <div class="etat-chargement" role="status">Préparation de votre cuisine…</div>
+    </main>
+    <footer class="pied-site">
+      <span>À table.</span>
+    </footer>
+  </div>
+  <dialog id="fenetre-recette" aria-labelledby="titre-fenetre"></dialog>
+  <dialog id="fenetre-selecteur-ingredients" class="fenetre-selecteur-ingredients" aria-labelledby="titre-selecteur-ingredients"></dialog>
+  <div id="annonce-vocale" class="texte-masque" role="status" aria-live="polite"></div>
+  <noscript><p class="message-sans-javascript">Cette application nécessite JavaScript.</p></noscript>
+</body>
+</html>

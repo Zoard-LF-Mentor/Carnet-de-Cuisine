@@ -1,0 +1,40 @@
+enregistrerRecette({
+  identifiant: "poulet-moutarde-miel-mijoteuse",
+  nom: "Poulet à la moutarde et au miel à la mijoteuse",
+  categorie: "plat-principal",
+  cuisine: "Poulet à la mijoteuse",
+  image: "https://media.soscuisine.com/images/recettes/large/2575.jpg",
+  preferences: ["sans-gluten"],
+  allergenes: ["moutarde"],
+  difficulte: 1,
+  preparation: 15,
+  cuisson: 420,
+  portions: 4,
+  calories: 250,
+  ingredients: [
+    { nom: "huile végétale en vaporisateur", quantite: 1, unite: "vaporisation" },
+    { nom: "oignon", quantite: 1, unite: "unité" },
+    { nom: "ail", quantite: 3, unite: "gousses" },
+    { nom: "huile d'olive", quantite: 2, unite: "c. à soupe" },
+    { nom: "miel", quantite: 2, unite: "c. à soupe" },
+    { nom: "moutarde de dijon", quantite: 0.25, unite: "tasse" },
+    { nom: "moutarde à l'ancienne", quantite: 1, unite: "c. à soupe" },
+    { nom: "pâte de tomates", quantite: 1, unite: "c. à soupe" },
+    { nom: "vinaigre blanc", quantite: 1, unite: "c. à soupe" },
+    { nom: "eau", quantite: 0.5, unite: "tasse" },
+    { nom: "romarin frais", quantite: 1, unite: "branche" },
+    { nom: "piment de Cayenne", quantite: 1, unite: "pincée" },
+    { nom: "poitrines de poulet", quantite: 1.5, unite: "désossées et sans peau" },
+    { nom: "sel", quantite: 1, unite: "pincée, facultatif" },
+    { nom: "poivre", quantite: 1, unite: "au goût, facultatif" }
+  ],
+  avantDeCommencer: "Cette recette nécessite une mijoteuse.",
+  etapes: [
+    "Vaporiser légèrement le fond et les bords de la cocotte. Trancher l'oignon et émincer l'ail.",
+    "Chauffer la moitié de l'huile et cuire l'oignon et l'ail environ 3 min, jusqu'à ce qu'ils soient translucides. Transférer dans la cocotte.",
+    "Ajouter le reste de l'huile, le miel, les moutardes, la pâte de tomates, le vinaigre, l'eau, le romarin et le piment.",
+    "Ajouter le poulet et bien l'enrober de sauce. Couvrir et cuire à faible intensité pendant 7 h.",
+    "Rectifier l'assaisonnement et servir."
+  ],
+  source: { nom: "SOS Cuisine", url: "https://www.soscuisine.com/recette/poulet-moutarde-miel-mijoteuse" }
+});

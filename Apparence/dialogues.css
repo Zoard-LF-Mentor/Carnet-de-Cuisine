@@ -1,0 +1,51 @@
+﻿#fenetre-selecteur-ingredients { width: min(1040px, calc(100% - 28px)); max-height: min(90vh, 920px); overflow-x: hidden; }
+.contenu-selecteur-ingredients { padding: 34px clamp(18px, 4vw, 42px) 28px; }
+.entete-selecteur-ingredients { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 0 42px 20px 0; border-bottom: 1px solid var(--trait); }
+.entete-selecteur-ingredients h2 { margin: 0; color: var(--encre); font-family: var(--police-serif); font-size: clamp(28px, 4vw, 40px); font-weight: 400; line-height: 1.08; }
+.entete-selecteur-ingredients h2 span { color: var(--corail); }
+.entete-selecteur-ingredients .sous-titre-page { max-width: 520px; }
+.compteur-selecteur { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; padding: 8px 12px; border-left: 2px solid var(--corail); }
+.compteur-selecteur strong { color: var(--vert); font-family: var(--police-serif); font-size: 25px; font-weight: 400; }
+.compteur-selecteur > span { color: var(--texte-estompe); font-size: 9px; line-height: 1.3; }
+.recherche-selecteur { display: flex; align-items: center; gap: 10px; max-width: 620px; padding: 11px 0; margin: 12px 0; border-bottom: 1px solid var(--trait); color: var(--corail); }
+.recherche-selecteur > span:first-child { font-size: 23px; }
+.recherche-selecteur input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--encre); font: inherit; font-size: 13px; }
+.recherche-selecteur:focus-within { border-color: var(--corail); }
+.resultat-selecteur { margin: 15px 0 8px; color: var(--texte-estompe); font-size: 10px; }
+.resultat-selecteur span { color: var(--vert); font-weight: 700; }
+.actions-selecteur { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; margin-bottom: 8px; }
+.actions-selecteur .resultat-selecteur { margin: 0; }
+.actions-selecteur .bouton-secondaire { padding: 8px 11px; cursor: pointer; }
+.grille-selecteur-ingredients { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
+.tuile-ingredient { display: grid; grid-template-rows: 40px minmax(30px, auto) 15px; justify-items: start; gap: 7px; min-width: 0; min-height: 104px; padding: 10px; border: 1px solid var(--trait); border-radius: 3px; background: var(--surface); color: var(--encre); text-align: left; cursor: pointer; transition: border-color .14s ease, background-color .14s ease, transform .14s ease; }
+.tuile-ingredient:hover { transform: translateY(-2px); border-color: #8fa894; background: #f7f8f2; }
+.tuile-ingredient:focus-visible { outline: 2px solid var(--corail); outline-offset: 2px; }
+.tuile-ingredient[hidden] { display: none; }
+.tuile-ingredient:disabled { border-color: #dce5d6; background: #f0f4ec; color: var(--texte-estompe); cursor: default; transform: none; }
+.symbole-ingredient { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--vert-doux); font-size: 21px; }
+.tuile-ingredient-ajoutee .symbole-ingredient { background: #e7ebdf; }
+.tuile-ingredient-ajoutee { border-color: #91aa91; background: #edf4e9; }
+.nom-tuile-ingredient { align-self: end; overflow-wrap: anywhere; font-family: var(--police-serif); font-size: 14px; line-height: 1.15; }
+.tuile-ingredient small { color: var(--texte-estompe); font-size: 9px; }
+.pied-selecteur { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--trait); color: var(--texte-estompe); font-size: 10px; }
+dialog { width: min(850px, calc(100% - 30px)); max-height: min(90vh, 900px); padding: 0; overflow: auto; border: 1px solid var(--trait); background: var(--surface); color: var(--encre); box-shadow: 0 20px 70px #10251d3b; }
+dialog::backdrop { background: #13271fcc; }
+.bouton-fermer-fenetre { position: sticky; z-index: 2; top: 9px; float: right; width: 35px; height: 35px; margin: 9px 9px -45px 0; border: 0; border-radius: 50%; background: var(--surface); color: var(--vert); font-size: 24px; }
+.contenu-fenetre-recette { padding: 36px clamp(20px, 5vw, 52px) 40px; }
+.image-fenetre { width: 100%; max-height: 260px; margin-bottom: 26px; object-fit: cover; }
+.contenu-fenetre-recette h2 { margin: 0; font-family: var(--police-serif); font-size: 36px; font-weight: 400; }
+.description-fenetre { max-width: 660px; color: var(--texte-estompe); font-size: 13px; line-height: 1.6; }
+.donnees-fenetre { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding: 15px 0; margin: 17px 0 24px; border-top: 1px solid var(--trait); border-bottom: 1px solid var(--trait); color: var(--texte-estompe); font-size: 11px; }
+.note-adaptation-cuisson { padding: 12px 14px; margin: -8px 0 23px; border-left: 3px solid #c18b37; background: #fbf3e4; color: #654c26; font-size: 11px; line-height: 1.6; }
+.note-adaptation-cuisson strong { display: block; margin-bottom: 3px; }
+.donnees-fenetre label { display: flex; align-items: center; gap: 7px; }
+.donnees-fenetre input { width: 58px; padding: 5px; border: 1px solid var(--trait); }
+.colonnes-fenetre { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.colonnes-fenetre h3 { margin: 0 0 12px; font-family: var(--police-serif); font-size: 20px; font-weight: 400; }
+.ingredients-detail, .etapes-detail { padding: 0; margin: 0; list-style: none; }
+.ingredient-detail { display: grid; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--trait); font-size: 11px; }
+.ingredient-detail label { display: flex; align-items: center; gap: 8px; }
+.ingredient-detail input[type="checkbox"] { accent-color: var(--vert); }
+.ingredient-detail.ingredient-omis label span { color: var(--texte-estompe); text-decoration: line-through; }
+.etapes-detail { list-style: decimal; padding-left: 20px; }
+.etapes-detail li { padding: 0 0 13px 4px; color: var(--encre); font-size: 11px; line-height: 1.6; }
