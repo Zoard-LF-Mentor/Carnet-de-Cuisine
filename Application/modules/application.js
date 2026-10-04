@@ -1,5 +1,11 @@
 (function (app) {
   const { root, state, pantry, render, openSelector, openRecipe, ingredientDialog, recipeDialog, normalize } = app;
+  const localServerPage = location.protocol === "http:" && location.hostname === "127.0.0.1" && /^\/[a-f0-9]{32}\/$/.test(location.pathname);
+  if (localServerPage) {
+    const keepServerAlive = () => fetch(new URL("__health", location.href), { cache: "no-store" }).catch(() => {});
+    keepServerAlive();
+    window.setInterval(keepServerAlive, 30000);
+  }
 
   function addUnique(list, value) {
     const name = String(value || "").trim();
@@ -19,6 +25,7 @@
     state.view = view;
     app.saveState();
     render();
+    if (view === "nathalie") app.checkNathalieLocalAssistant().then(render);
     document.querySelector("#bouton-guide-entete")?.setAttribute("aria-pressed", String(view === "guide"));
   }
 
@@ -30,22 +37,51 @@
     const control = target.closest("[data-action]");
     if (!control) return;
     const { action, id, name, index } = control.dataset;
+    if (action === "choose-nathalie-word") {
+      root.querySelector("[data-nathalie-word-file]")?.click();
+      return;
+    }
+    if (action === "check-nathalie-local") {
+      app.checkNathalieLocalAssistant().then(render);
+      return;
+    }
+    if (action === "convert-nathalie-local") {
+      const model = root.querySelector("[data-local-model]")?.value;
+      app.nathalieEditor.message = "Conversion en cours sur cet ordinateur. Cela peut prendre quelques minutes…";
+      render();
+      app.convertNathalieWithLocalAssistant(model).then(render).catch((error) => {
+        app.nathalieEditor.pendingRecipe = null;
+        app.nathalieEditor.message = error.message || "La conversion locale n’a pas abouti. Vérifiez Ollama et réessayez.";
+        render();
+      });
+      return;
+    }
+    if (action === "convert-nathalie-batch") {
+      const model = root.querySelector("[data-local-model]")?.value;
+      app.convertNathalieBatch(model).catch((error) => {
+        app.nathalieEditor.message = error.message;
+        render();
+      });
+      return;
+    }
+    if (action === "save-nathalie-batch") {
+      app.saveNathalieBatchRecipe(id).catch((error) => {
+        app.nathalieEditor.message = error.message;
+        render();
+      });
+      return;
+    }
+    if (action === "remove-nathalie-batch") {
+      app.removeNathalieBatchItem(id);
+      render();
+      return;
+    }
     if (action === "connect-nathalie-recipes") {
       app.personalRecipeStore.connect().then(() => {
         app.nathalieEditor.message = "Le fichier de recettes de Nathalie est prêt. Les modifications seront enregistrées dans ce dossier.";
         render();
       }).catch((error) => {
         app.nathalieEditor.message = error.name === "AbortError" ? "Choix du dossier annulé." : error.message;
-        render();
-      });
-      return;
-    }
-    if (action === "copy-nathalie-prompt") {
-      navigator.clipboard.writeText(app.makeNathaliePrompt(app.nathalieEditor.sourceText)).then(() => {
-        app.nathalieEditor.message = "La demande est copiée. Collez-la dans ChatGPT, puis copiez sa réponse JSON ici.";
-        render();
-      }).catch(() => {
-        app.nathalieEditor.message = "La copie automatique est indisponible. Sélectionnez et copiez le texte de la recette, puis ajoutez-le à la demande ChatGPT.";
         render();
       });
       return;
@@ -141,18 +177,6 @@
     const kind = form.dataset.form;
     if (!kind) return;
     event.preventDefault();
-    if (kind === "nathalie-recipe-import") {
-      try {
-        app.nathalieEditor.responseText = String(new FormData(form).get("recipe-json") || "");
-        app.nathalieEditor.pendingRecipe = app.personalRecipeStore.prepare(app.nathalieEditor.responseText);
-        app.nathalieEditor.message = "Vérifiez le nom, les ingrédients et les étapes avant de confirmer l’ajout.";
-      } catch (error) {
-        app.nathalieEditor.pendingRecipe = null;
-        app.nathalieEditor.message = error.message;
-      }
-      render();
-      return;
-    }
     const value = new FormData(form).get("ingredient");
     if (kind === "preparation-group") {
       const name = String(new FormData(form).get("group") || "").trim();
@@ -169,8 +193,31 @@
   });
 
   root.addEventListener("input", (event) => {
+    if (event.target instanceof HTMLTextAreaElement && event.target.matches("[data-batch-source]")) {
+      const message = app.updateNathalieBatchSource(event.target.dataset.batchSource, event.target.value);
+      const row = event.target.closest(".lot-recette-nathalie");
+      const status = row?.querySelector("header span");
+      if (status) status.textContent = message;
+      const details = event.target.closest("details");
+      while (details?.nextElementSibling) details.nextElementSibling.remove();
+      const hasQueued = root.querySelector('.lot-recette-nathalie [data-batch-source]') !== null &&
+        Array.from(root.querySelectorAll(".lot-recette-nathalie" )).some((item) => item.querySelector("header span")?.textContent.includes("prête à reconvertir"));
+      const convertButton = root.querySelector('[data-action="convert-nathalie-batch"]');
+      if (convertButton) convertButton.disabled = !hasQueued || !app.nathalieLocalAssistant.models.length;
+      return;
+    }
     if (event.target instanceof HTMLTextAreaElement && event.target.matches("[data-nathalie-draft]")) {
       app.nathalieEditor[event.target.dataset.nathalieDraft] = event.target.value;
+      if (app.nathalieEditor.pendingRecipe) {
+        app.nathalieEditor.pendingRecipe = null;
+        root.querySelector(".apercu-recette-nathalie")?.remove();
+        const message = root.querySelector(".message-nathalie");
+        if (message) message.textContent = "Le texte a changé. Préparez et vérifiez de nouveau la recette.";
+      }
+      if (event.target.dataset.nathalieDraft === "sourceText") {
+        const hasRecipeText = event.target.value.trim().length >= 20;
+        root.querySelector('[data-action="convert-nathalie-local"]')?.toggleAttribute("disabled", !hasRecipeText);
+      }
       return;
     }
     if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-search]")) return;
@@ -181,6 +228,40 @@
     const search = root.querySelector("[data-search]");
     search?.focus({ preventScroll: true });
     if (cursor !== null) search?.setSelectionRange(cursor, cursor);
+  });
+
+  root.addEventListener("change", (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    if (!input.matches("[data-nathalie-word-file]")) return;
+    if (input.files?.length) app.addNathalieBatchFiles(input.files);
+    input.value = "";
+  });
+
+  root.addEventListener("dragover", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const zone = target.closest("[data-nathalie-dropzone]");
+    if (!zone || !event.dataTransfer?.types.includes("Files")) return;
+    event.preventDefault();
+    zone.classList.add("depot-recette-actif");
+  });
+
+  root.addEventListener("dragleave", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const zone = target.closest("[data-nathalie-dropzone]");
+    if (zone && !zone.contains(event.relatedTarget)) zone.classList.remove("depot-recette-actif");
+  });
+
+  root.addEventListener("drop", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const zone = target.closest("[data-nathalie-dropzone]");
+    if (!zone || !event.dataTransfer?.files.length) return;
+    event.preventDefault();
+    zone.classList.remove("depot-recette-actif");
+    app.addNathalieBatchFiles(event.dataTransfer.files);
   });
 
   root.addEventListener("change", (event) => {
@@ -348,16 +429,21 @@
 
   async function loadRecipeScripts() {
     const files = window.MANIFESTE_RECETTES?.fichiers || [];
+    const failures = [];
     for (const path of files) {
-      if (typeof path !== "string" || !/^[\w./-]+\.js$/.test(path) || path.includes("..")) continue;
+      if (typeof path !== "string" || !/^[\w./-]+\.js$/.test(path) || path.includes("..")) {
+        failures.push(String(path));
+        continue;
+      }
       await new Promise((resolve) => {
         const script = document.createElement("script");
         script.src = path;
         script.onload = resolve;
-        script.onerror = resolve;
+        script.onerror = () => { failures.push(path); resolve(); };
         document.head.append(script);
       });
     }
+    app.recipeLoadFailures = failures;
   }
 
   function exportShopping() {
@@ -375,5 +461,6 @@
     await app.personalRecipeStore.initialize();
     if (app.state.view === "planifiees" || app.state.view === "comparaison") app.state.view = "recettes";
     render();
+    if (app.state.view === "nathalie") app.checkNathalieLocalAssistant().then(render);
   }, { once: true });
 })(window.AtTable = window.AtTable || {});

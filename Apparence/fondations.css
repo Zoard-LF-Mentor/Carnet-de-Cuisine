@@ -86,4 +86,5 @@ button, select { color: inherit; }
 .section-laterale > .etiquette-selection { margin-top: 19px; }
 .vue-principale { min-width: 0; }
 .etat-chargement { padding: 100px 20px; color: var(--texte-estompe); text-align: center; }
+.alerte-catalogue { max-width: 1180px; padding: 11px 14px; margin: 14px auto; border-left: 3px solid var(--corail); background: var(--surface); color: var(--encre); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .message-sans-javascript { padding: 20px; }

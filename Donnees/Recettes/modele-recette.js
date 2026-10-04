@@ -6,7 +6,7 @@ enregistrerRecette(
     categorie: "categorie",                 // plat-principal | salade | dessert | collation | soupe | condiment | 
     cuisine: "Type de cuisine",
     image: "url-image",                     // http(s) obligatoire
-    preferences: [],                        // sans-gluten | sans-lactose | végétarien | Sans Reflux |
+    preferences: [],                        // sans-gluten | sans-lactose | végétarien
      difficulte: x,                          
     preparation: x,                        
     cuisson: x,                            
@@ -25,6 +25,8 @@ enregistrerRecette(
     description: "Courte présentation affichée en haut de la fiche.",
     avantDeCommencer: "Matériel ou préparation requise.",
     observations: "Conservation, variantes ou remarques.",
+    aVerifier: [],                     // Incertitudes conservées avec la recette (champ, note, valeurLue)
+    preuves: [],                       // Citations exactes de la fiche (champ, extrait)
     valeurNutritive: {
       lipides: "x g",
       grasSatures: "x g",

@@ -1,7 +1,7 @@
 (function (app) {
   const APP_KEY = "EtatCuisineV2";
   const PANTRY_KEY = "EtatEpicerieV1";
-  const PREFERENCES = ["sans-gluten", "sans-lactose", "végétarien", "sans-reflux"];
+  const PREFERENCES = ["sans-gluten", "sans-lactose", "végétarien"];
 
   function readJson(key, fallback) {
     try {

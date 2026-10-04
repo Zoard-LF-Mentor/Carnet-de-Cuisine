@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tests du carnet À table</title>
+  <style>
+    body { max-width: 880px; margin: 2rem auto; padding: 0 1rem; color: #20312b; font: 16px/1.5 system-ui, sans-serif; }
+    h1 { margin-bottom: .25rem; }
+    #resume { padding: .75rem 1rem; border-left: 4px solid #59785b; background: #edf3eb; }
+    #resultats { padding-left: 1.5rem; }
+    .succes { color: #17633b; }
+    .echec { color: #a12622; }
+    code { overflow-wrap: anywhere; }
+  </style>
+  <script src="../Application/modules/etat.js"></script>
+  <script src="../Application/modules/catalogue-recettes.js"></script>
+  <script src="../Application/vendor/mammoth.browser.min.js"></script>
+  <script>
+    window.AtTable.registerRecipe({
+      identifiant: "test-fixture-base",
+      nom: "Fixture de test",
+      categorie: "Salade",
+      ingredients: [{ nom: "carottes", quantite: null, unite: "" }],
+      etapes: []
+    }, { owner: "Tests" });
+  </script>
+  <script src="../Application/modules/recettes-nathalie.js"></script>
+  <script src="../Application/modules/vues/nathalie.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Vérification des recettes personnelles</h1>
+    <p>Tests locaux en mémoire uniquement. Aucun dossier de recettes n’est ouvert et aucune recette n’est sauvegardée.</p>
+    <p id="resume" role="status">Tests en cours…</p>
+    <ol id="resultats"></ol>
+    <section>
+      <h2>Extraction Word réelle</h2>
+      <label for="fichiers-word-test">Choisir des fichiers .docx à extraire localement</label>
+      <input id="fichiers-word-test" type="file" accept=".docx" multiple>
+      <p id="resume-word" role="status">Aucun fichier Word sélectionné. Le texte ne sera ni envoyé à Ollama ni sauvegardé.</p>
+      <ul id="resultats-word"></ul>
+    </section>
+  </main>
+  <dialog id="fenetre-recette"></dialog>
+  <script src="../Application/modules/vues/fiche-recette.js"></script>
+  <script>
+    (async function () {
+      const app = window.AtTable;
+      const results = document.querySelector("#resultats");
+      const summary = document.querySelector("#resume");
+      let passed = 0;
+      let failed = 0;
+
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+      }
+
+      async function test(name, run) {
+        const item = document.createElement("li");
+        try {
+          await run();
+          item.className = "succes";
+          item.textContent = `RÉUSSI · ${name}`;
+          passed += 1;
+        } catch (error) {
+          item.className = "echec";
+          item.textContent = `ÉCHEC · ${name} : ${error.message}`;
+          failed += 1;
+        }
+        results.append(item);
+      }
+
+      function fixture(overrides = {}) {
+        return {
+          nom: "Salade de carottes",
+          categorie: "Salade",
+          cuisine: "Familiale",
+          preferences: [],
+          allergenes: ["moutarde"],
+          difficulte: 1,
+          preparation: 10,
+          cuisson: null,
+          attente: null,
+          portions: 2,
+          ingredients: [{ nom: "carottes", quantite: 0.5, unite: "tasse" }],
+          etapes: ["Mélanger les carottes."],
+          preuves: [
+            { champ: "ingredients[0]", extrait: "½ tasse de carottes" },
+            { champ: "etapes[0]", extrait: "Mélanger les carottes." },
+            { champ: "preparation", extrait: "Préparation : 10 minutes" },
+            { champ: "portions", extrait: "Donne 2 portions" }
+          ],
+          ...overrides
+        };
+      }
+
+      function memoryDirectory() {
+        function createDirectory() {
+          const files = new Map();
+          const directories = new Map();
+          return {
+            files,
+            directories,
+            async queryPermission() { return "granted"; },
+            async requestPermission() { return "granted"; },
+            async getFileHandle(name, options = {}) {
+              if (!files.has(name) && options.create) {
+                let content = "";
+                files.set(name, {
+                  async getFile() { const current = content; return { size: current.length, text: async () => current }; },
+                  async createWritable() {
+                    let pending = "";
+                    return { write: async (value) => { pending = String(value); }, close: async () => { content = pending; } };
+                  },
+                  read: () => content
+                });
+              }
+              if (!files.has(name)) throw new DOMException("Fichier absent.", "NotFoundError");
+              return files.get(name);
+            },
+            async getDirectoryHandle(name, options = {}) {
+              if (!directories.has(name) && options.create) directories.set(name, createDirectory());
+              if (!directories.has(name)) throw new DOMException("Dossier absent.", "NotFoundError");
+              return directories.get(name);
+            },
+            async *entries() {
+              for (const [name] of files) yield [name, { kind: "file" }];
+              for (const [name] of directories) yield [name, { kind: "directory" }];
+            },
+            async removeEntry(name) { files.delete(name); directories.delete(name); }
+          };
+        }
+        return createDirectory();
+      }
+
+      const source = "½ tasse de carottes\nMélanger les carottes.\nPréparation : 10 minutes. Donne 2 portions.";
+
+      await test("accepte une fiche citée et conserve ses preuves", () => {
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(fixture()), source);
+        assert(recipe.ingredients[0].quantite === 0.5, "la fraction ½ n’a pas été reconnue");
+        assert(recipe.preuves.length === 4, "les preuves n’ont pas été conservées");
+        assert(app.personalRecipeStore.validate(JSON.parse(JSON.stringify(recipe))), "la recette prête ne passe pas la validation de sauvegarde");
+      });
+
+      await test("affiche les extraits cités dans l’aperçu et la fiche sans interpréter le HTML", () => {
+        const unsafeExcerpt = "<script>alert(1)</scr" + "ipt>";
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(fixture({ preuves: fixture().preuves.map((proof) => proof.champ === "etapes[0]" ? { champ: proof.champ, extrait: unsafeExcerpt } : proof) })), source);
+        app.nathalieEditor.pendingRecipe = recipe;
+        const preview = app.renderNathalieView();
+        assert(preview.includes("Extraits cités"), "les citations manquent dans l’aperçu");
+        const escapedScript = "&lt;script&gt;alert(1)&lt;/scr" + "ipt&gt;";
+        assert(preview.includes(escapedScript), "la citation n’est pas échappée dans l’aperçu");
+        app.registerRecipe(recipe, { owner: "Nathalie" });
+        app.openRecipe(recipe.identifiant);
+        const detail = document.querySelector("#fenetre-recette").innerHTML;
+        assert(detail.includes("Extraits cités"), "les citations manquent dans la fiche enregistrée");
+        assert(detail.includes("Allergènes déclarés dans la fiche") && detail.includes("moutarde"), "les allergènes déclarés ne sont pas visibles dans la fiche");
+        assert(detail.includes("ne confirme pas l’absence d’allergènes"), "la fiche présente les allergènes comme une garantie");
+        assert(!detail.includes(unsafeExcerpt), "la citation n’est pas échappée dans la fiche enregistrée");
+        document.querySelector("#fenetre-recette").close();
+        app.nathalieEditor.pendingRecipe = null;
+        app.unregisterPersonalRecipe(recipe.identifiant);
+      });
+
+      await test("refuse un ajout invalide avant tout accès au dossier", async () => {
+        let rejected = false;
+        try { await app.personalRecipeStore.add({}); }
+        catch (error) { rejected = error.message.includes("incomplète"); }
+        assert(rejected, "l’ajout invalide n’a pas été refusé par la validation");
+        const malformedPreferences = fixture({ identifiant: "nathalie-test", preferences: "sans-gluten" });
+        assert(!app.personalRecipeStore.validate(malformedPreferences), "une préférence qui n’est pas un tableau a été acceptée");
+      });
+
+      await test("propose Ollama comme unique assistant de conversion", () => {
+        const view = app.renderNathalieView();
+        assert(view.includes("Ollama"), "les instructions de l’assistant local sont absentes");
+        assert(!view.includes("ChatGPT") && !view.includes("nathalie-recipe-import"), "un parcours d’assistant distant est encore affiché");
+      });
+
+      await test("envoie le texte au modèle comme donnée non fiable et garde la session active", async () => {
+        const originalFetch = window.fetch;
+        const originalModels = app.nathalieLocalAssistant.models;
+        let request;
+        try {
+          app.nathalieLocalAssistant.models = ["modele-test"];
+          window.fetch = async (_url, options) => {
+            request = JSON.parse(options.body);
+            return { ok: true, json: async () => ({ message: { content: JSON.stringify(fixture()) } }) };
+          };
+          await app.convertNathalieWithLocalAssistant("modele-test", source);
+          assert(request.keep_alive === "30m", "la session du modèle n’est pas maintenue active");
+          assert(request.messages[0].content.includes("donnée non fiable"), "les instructions du système ne protègent pas contre le texte injecté");
+          assert(request.messages[0].content.includes("nombres de minutes"), "les types attendus pour les champs numériques ne sont pas explicites");
+          assert(request.messages[1].content.includes(source), "la fiche n’est pas incluse dans la demande");
+        } finally {
+          window.fetch = originalFetch;
+          app.nathalieLocalAssistant.models = originalModels;
+        }
+      });
+
+      await test("normalise les nombres textuels simples renvoyés par le modèle", () => {
+        const data = fixture({ ingredients: [{ nom: "carottes", quantite: "1/2", unite: "tasse" }], preparation: "10 minutes", portions: "2 portions" });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source);
+        assert(recipe.ingredients[0].quantite === 0.5, "la fraction textuelle n’a pas été normalisée");
+        assert(recipe.preparation === 10, "la durée textuelle en minutes n’a pas été normalisée");
+        assert(recipe.portions === 2, "le nombre de portions textuel n’a pas été normalisé");
+      });
+
+      await test("neutralise un format numérique ambigu au lieu de l’interpréter", () => {
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(fixture({ preparation: "environ dix minutes" })), source);
+        assert(recipe.preparation === null, "une durée ambiguë a été interprétée automatiquement");
+        assert(recipe.aVerifier.some((note) => note.champ === "preparation"), "le format numérique ambigu n’est pas signalé");
+      });
+
+      await test("neutralise une quantité qui contredit sa citation", () => {
+        const data = fixture({ ingredients: [{ nom: "carottes", quantite: 5, unite: "tasses" }], preuves: fixture().preuves.map((proof) => proof.champ === "ingredients[0]" ? { ...proof, extrait: "4 tasses de carottes" } : proof) });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source.replace("½ tasse de carottes", "4 tasses de carottes"));
+        assert(recipe.ingredients[0].quantite === null, "la quantité contradictoire n’a pas été neutralisée");
+        assert(recipe.aVerifier.some((note) => note.champ === "ingredients[0].quantite"), "la contradiction n’est pas signalée");
+      });
+
+      await test("neutralise une unité contradictoire sans convertir la quantité", () => {
+        const data = fixture({ ingredients: [{ nom: "carottes", quantite: 4, unite: "ml" }], preuves: fixture().preuves.map((proof) => proof.champ === "ingredients[0]" ? { ...proof, extrait: "4 tasses de carottes" } : proof) });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source.replace("½ tasse de carottes", "4 tasses de carottes"));
+        assert(recipe.ingredients[0].quantite === 4, "la quantité concordante a été modifiée");
+        assert(recipe.ingredients[0].unite === "", "l’unité contradictoire n’a pas été neutralisée");
+        assert(recipe.aVerifier.some((note) => note.champ === "ingredients[0].unite"), "la contradiction d’unité n’est pas signalée");
+      });
+
+      await test("sauvegarde les preuves et crée une sauvegarde dans un dossier simulé", async () => {
+        const store = app.personalRecipeStore;
+        const originalDirectory = store.state.directory;
+        const originalRecipes = store.state.recipes;
+        const originalBackupCount = store.state.backupCount;
+        const originalStatus = store.state.status;
+        const originalMessage = store.state.message;
+        const fakeDirectory = memoryDirectory();
+        const added = [];
+        try {
+          store.state.directory = fakeDirectory;
+          store.state.recipes = [];
+          const first = store.prepare(JSON.stringify(fixture()), source);
+          await store.add(first);
+          added.push(first);
+          const savedText = await (await fakeDirectory.getFileHandle("recettes-nathalie.json")).getFile().then((file) => file.text());
+          const savedData = JSON.parse(savedText);
+          assert(savedData.version === 1 && savedData.recettes[0].preuves.length === 4, "la recette ou ses preuves ne sont pas dans le JSON");
+          const second = store.prepare(JSON.stringify(fixture({ nom: "Salade de carottes numéro deux" })), source);
+          await store.add(second);
+          added.push(second);
+          const backups = fakeDirectory.directories.get("Sauvegardes");
+          assert(backups && [...backups.files.keys()].length === 1, "la modification n’a pas créé une sauvegarde datée");
+          const current = JSON.parse(await (await fakeDirectory.getFileHandle("recettes-nathalie.json")).getFile().then((file) => file.text()));
+          assert(current.recettes.length === 2 && current.recettes.every((recipe) => store.validate(recipe)), "le JSON courant ne passe pas sa validation après sauvegarde");
+          store.state.status = "error";
+          store.state.message = "Le fichier courant est invalide.";
+          store.state.backupCount = 1;
+          assert(app.renderNathalieView().includes("Restaurer la dernière copie"), "la restauration est masquée en état d’erreur");
+          const originalSaveState = app.saveState;
+          const originalFavorites = app.state.favorites;
+          const originalPreparation = app.state.recipesToPrepare;
+          try {
+            app.saveState = () => {};
+            await store.restoreLatest();
+            assert(store.state.recipes.length === 1 && store.state.recipes[0].identifiant === first.identifiant, "la dernière copie ne restaure pas la collection précédente");
+            assert(store.state.status === "connected" && store.state.message === "", "la restauration ne rétablit pas l’état connecté");
+            const restored = JSON.parse(await (await fakeDirectory.getFileHandle("recettes-nathalie.json")).getFile().then((file) => file.text()));
+            assert(restored.recettes.length === 1 && restored.recettes[0].preuves.length === 4, "le fichier restauré ne contient pas la recette et ses preuves");
+          } finally {
+            app.saveState = originalSaveState;
+            app.state.favorites = originalFavorites;
+            app.state.recipesToPrepare = originalPreparation;
+          }
+        } finally {
+          for (const recipe of added) app.unregisterPersonalRecipe(recipe.identifiant);
+          store.state.directory = originalDirectory;
+          store.state.recipes = originalRecipes;
+          store.state.backupCount = originalBackupCount;
+          store.state.status = originalStatus;
+          store.state.message = originalMessage;
+        }
+      });
+
+      await test("remplace les ingrédients et étapes sans preuve par des marqueurs visibles", () => {
+        const data = fixture({ preuves: [] });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source);
+        assert(recipe.ingredients[0].nom === "Ingrédient à vérifier", "l’ingrédient incertain n’est pas visible");
+        assert(recipe.ingredients[0].quantite === null, "la quantité sans preuve a été conservée");
+        assert(recipe.etapes[0] === "Étape à vérifier", "l’étape sans preuve n’est pas visible");
+        assert(app.personalRecipeStore.validate(recipe), "les marqueurs d’incertitude empêchent une sauvegarde valide");
+      });
+
+      await test("refuse une citation qui n’apparaît pas dans la fiche", () => {
+        const data = fixture({ preuves: fixture().preuves.map((proof) => proof.champ === "etapes[0]" ? { ...proof, extrait: "Faire bouillir pendant 45 minutes" } : proof) });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source);
+        assert(recipe.etapes[0] === "Étape à vérifier", "l’étape fondée sur une citation inventée est conservée");
+        assert(recipe.aVerifier.some((note) => note.champ === "etapes[0]"), "la citation introuvable n’est pas signalée");
+      });
+
+      await test("accepte une catégorie vide seulement si elle est signalée", () => {
+        const data = fixture({ categorie: "", aVerifier: [{ champ: "categorie", note: "Classement à confirmer." }] });
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(data), source);
+        assert(recipe.categorie === "", "la catégorie incertaine a été inventée");
+        let rejected = false;
+        try { app.personalRecipeStore.prepare(JSON.stringify(fixture({ categorie: "" })), source); }
+        catch { rejected = true; }
+        assert(rejected, "une catégorie vide non signalée a été acceptée");
+      });
+
+      await test("signale les allergènes non déclarés sans prétendre qu’ils sont absents", () => {
+        const recipe = app.personalRecipeStore.prepare(JSON.stringify(fixture({ allergenes: [] })), source);
+        assert(recipe.aVerifier.some((note) => note.champ === "allergenes" && note.note.includes("absence n’est pas confirmée")), "l’incertitude sur les allergènes n’est pas expliquée");
+      });
+
+      await test("extrait un fichier texte et refuse un format non pris en charge", async () => {
+        const text = await app.personalRecipeStore.extractWordDocument({ name: "fiche.txt", size: 25, text: async () => "Carottes\nMélanger et servir avec une salade." });
+        assert(text.includes("Mélanger"), "le texte n’a pas été extrait");
+        let rejected = false;
+        try { await app.personalRecipeStore.extractWordDocument({ name: "fiche.pdf", size: 25 }); }
+        catch { rejected = true; }
+        assert(rejected, "un format non pris en charge a été accepté");
+      });
+
+      await test("refuse une réponse qui n’est pas un objet JSON valide", () => {
+        let rejected = false;
+        try { app.personalRecipeStore.prepare("[1, 2, 3]"); }
+        catch { rejected = true; }
+        assert(rejected, "un tableau JSON a été accepté comme recette");
+      });
+
+      summary.textContent = `${passed} test${passed === 1 ? "" : "s"} réussi${passed === 1 ? "" : "s"} · ${failed} échec${failed === 1 ? "" : "s"}`;
+      summary.className = failed ? "echec" : "succes";
+      summary.dataset.failed = String(failed);
+      document.documentElement.dataset.testsCompleted = "true";
+    })();
+  </script>
+  <script>
+    document.querySelector("#fichiers-word-test").addEventListener("change", async (event) => {
+      const files = Array.from(event.target.files || []);
+      const summary = document.querySelector("#resume-word");
+      const results = document.querySelector("#resultats-word");
+      results.replaceChildren();
+      let failures = 0;
+      for (const file of files) {
+        const item = document.createElement("li");
+        try {
+          const text = await window.AtTable.personalRecipeStore.extractWordDocument(file);
+          item.textContent = `RÉUSSI · ${file.name} · ${text.length} caractères extraits`;
+          item.className = "succes";
+        } catch (error) {
+          failures += 1;
+          item.textContent = `ÉCHEC · ${file.name} · ${error.message}`;
+          item.className = "echec";
+        }
+        results.append(item);
+      }
+      summary.textContent = files.length ? `${files.length - failures}/${files.length} fichier(s) extrait(s) localement; aucun texte envoyé ni sauvegardé.` : "Aucun fichier Word sélectionné. Le texte ne sera ni envoyé à Ollama ni sauvegardé.";
+      summary.className = failures ? "echec" : "succes";
+    });
+  </script>
+</body>
+</html>

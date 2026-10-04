@@ -3,6 +3,8 @@ $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
 $distribution = Join-Path $root "dist"
 $archive = Join-Path $distribution "AtTable-Windows.zip"
+$temporaryArchive = Join-Path $distribution ("AtTable-Windows-" + [guid]::NewGuid().ToString("N") + ".zip")
+$previousArchive = "$temporaryArchive.previous"
 $staging = Join-Path $env:TEMP ("AtTable-Windows-" + [guid]::NewGuid().ToString("N"))
 $folders = @("Application", "Apparence", "Images")
 $dataFolders = @("Recettes")
@@ -27,13 +29,31 @@ try {
         Copy-Item -Path (Join-Path $root "Donnees\$folder") -Destination $dataStaging -Recurse
     }
 
+    Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $temporaryArchive -CompressionLevel Optimal
     if (Test-Path $archive) {
-        Remove-Item $archive -Force
+        try {
+            [System.IO.File]::Replace($temporaryArchive, $archive, $previousArchive)
+            Remove-Item $previousArchive -Force
+        }
+        catch {
+            $fallbackArchive = Join-Path $distribution ("AtTable-Windows-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".zip")
+            [System.IO.File]::Move($temporaryArchive, $fallbackArchive)
+            $archive = $fallbackArchive
+            Write-Warning "L’archive existante est verrouillée; le nouveau paquet a été créé sous : $fallbackArchive"
+        }
+    }
+    else {
+        [System.IO.File]::Move($temporaryArchive, $archive)
     }
 
-    Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $archive -CompressionLevel Optimal
     Write-Host "Paquet créé : $archive"
 }
 finally {
     Remove-Item $staging -Recurse -Force
+    if (Test-Path $temporaryArchive) {
+        Remove-Item $temporaryArchive -Force
+    }
+    if (Test-Path $previousArchive) {
+        Remove-Item $previousArchive -Force
+    }
 }

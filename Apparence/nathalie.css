@@ -4,10 +4,39 @@
 .etat-fichier-nathalie { margin: 6px 0 0; color: var(--texte-estompe); font-size: 12px; line-height: 1.6; }
 .etat-fichier-nathalie strong { color: var(--encre); font-weight: 600; }
 .bouton-restaurer-nathalie { display: block; margin-top: 8px; }
+.import-word-nathalie { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(300px, 1.2fr); gap: 18px; align-items: center; padding: 22px 0 8px; }
+.import-word-nathalie h2 { margin: 0; font-family: var(--police-serif); font-size: 22px; font-weight: 400; }
+.import-word-nathalie > div:first-child p:last-child { max-width: 400px; margin: 7px 0 0; color: var(--texte-estompe); font-size: 12px; line-height: 1.6; }
+.zone-depot-recette-nathalie { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 13px; border: 1px dashed #9eae9b; background: var(--surface); transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }
+.zone-depot-recette-nathalie.depot-recette-actif { border-color: var(--vert); background: #edf4e9; box-shadow: inset 0 0 0 1px var(--vert); }
+.symbole-fichier-word { display: grid; width: 36px; height: 42px; flex: 0 0 auto; place-items: center; border: 1px solid #b7c8d7; background: #edf3f8; color: #315d7c; font-family: var(--police-sans); font-size: 18px; font-weight: 700; }
+.zone-depot-recette-nathalie > div { display: grid; flex: 1; gap: 4px; min-width: 0; }
+.zone-depot-recette-nathalie > div strong { color: var(--encre); font-size: 12px; }
+.zone-depot-recette-nathalie > div span { color: var(--texte-estompe); font-size: 10px; }
+.fichier-word-masque { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 .assistant-recette-nathalie { max-width: 760px; padding: 24px 0; }
 .assistant-recette-nathalie > header { display: flex; gap: 13px; align-items: start; margin-bottom: 19px; }
 .assistant-recette-nathalie > header > span { color: var(--corail); font-family: var(--police-serif); font-size: 22px; }
 .assistant-recette-nathalie > header p { margin: 5px 0 0; color: var(--texte-estompe); font-size: 12px; line-height: 1.55; }
+.assistant-recette-nathalie > header .surtitre { margin: 0 0 4px; color: var(--corail); font-size: 10px; }
+.option-assistant-local { padding: 16px 0; margin-top: 19px; border-top: 1px solid var(--trait); border-bottom: 1px solid var(--trait); }
+.option-assistant-local h3 { margin: 0; color: var(--encre); font-family: var(--police-serif); font-size: 18px; font-weight: 400; }
+.option-assistant-local > p, .option-assistant-local details, .methode-chatgpt { color: var(--texte-estompe); font-size: 12px; line-height: 1.6; }
+.option-assistant-local > p { margin: 5px 0 10px; }
+.option-assistant-local > button { margin-top: 9px; }
+.option-assistant-local > label { display: block; margin: 10px 0 5px; font-size: 12px; font-weight: 650; }
+.option-assistant-local select { max-width: 100%; min-width: 220px; padding: 9px 30px 9px 10px; border: 1px solid var(--trait); background: var(--surface); color: var(--encre); }
+.option-assistant-local details { padding-top: 10px; }
+.option-assistant-local summary, .methode-chatgpt summary { width: fit-content; color: var(--vert); cursor: pointer; }
+.option-assistant-local ol { padding-left: 22px; }
+.option-assistant-local li { padding: 3px 0; }
+.option-assistant-local a { color: var(--vert); text-underline-offset: 2px; }
+.option-assistant-local code { padding: 2px 5px; background: var(--vert-doux); color: var(--encre); }
+.option-assistant-local details p { margin: 8px 0 0; }
+.methode-chatgpt { padding: 14px 0; border-bottom: 1px solid var(--trait); }
+.methode-chatgpt > p { max-width: 620px; }
+.methode-chatgpt form { padding-top: 4px; }
+.etat-assistant-local { margin: 10px 0 0; }
 .assistant-recette-nathalie > label, .assistant-recette-nathalie form label { display: block; margin: 14px 0 7px; color: var(--encre); font-size: 12px; font-weight: 650; }
 .assistant-recette-nathalie textarea { display: block; width: 100%; min-height: 105px; padding: 12px; border: 1px solid var(--trait); border-radius: 2px; background: var(--surface); color: var(--encre); font: inherit; font-size: 13px; line-height: 1.55; resize: vertical; }
 .assistant-recette-nathalie textarea:focus-visible { outline: 2px solid var(--vert); outline-offset: 2px; }
@@ -21,6 +50,37 @@
 .apercu-recette-nathalie { padding: 14px 0; margin-top: 14px; border-top: 1px solid var(--trait); }
 .apercu-recette-nathalie h3 { margin: 0; font-family: var(--police-serif); font-size: 19px; font-weight: 400; }
 .apercu-recette-nathalie p { margin: 6px 0 0; color: var(--texte-estompe); font-size: 12px; }
+.apercu-recette-nathalie h4 { margin: 16px 0 5px; font-size: 12px; }
+.apercu-recette-nathalie ul, .apercu-recette-nathalie ol { padding-left: 21px; margin: 5px 0 0; color: var(--encre); font-size: 12px; line-height: 1.6; }
+.apercu-recette-nathalie li { padding: 2px 0; }
+.alerte-recette-nathalie { display: grid; gap: 3px; padding: 10px 12px; margin-top: 14px; border-left: 3px solid var(--corail); background: var(--surface-douce); color: var(--encre); font-size: 12px; line-height: 1.5; }
+.alerte-recette-nathalie strong { color: var(--corail); }
+.liste-recettes-nathalie { padding: 20px 0; border-top: 1px solid var(--trait); }
+.liste-recettes-nathalie > header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 18px; }
+.liste-recettes-nathalie h2 span { display: inline-grid; min-width: 25px; height: 25px; place-items: center; margin-left: 3px; border-radius: 50%; background: var(--vert-doux); color: var(--vert); font-family: var(--police-sans); font-size: 12px; vertical-align: middle; }
+.liste-recettes-nathalie > header > p { margin: 0; color: var(--texte-estompe); font-size: 11px; }
+.liste-recettes-nathalie ul { padding: 0; margin: 13px 0 0; list-style: none; border-top: 1px solid var(--trait); }
+.carte-recette-nathalie { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--trait); }
+.carte-recette-nathalie > div { display: grid; gap: 3px; }
+.carte-recette-nathalie > div > span { color: var(--texte-estompe); font-size: 10px; }
+.recette-nathalie-nom { width: fit-content; padding: 0; border: 0; background: transparent; color: var(--vert); font-family: var(--police-serif); font-size: 17px; text-align: left; cursor: pointer; }
+.recette-nathalie-nom:hover { color: var(--corail); }
+.bouton-retirer-recette-nathalie { width: 34px; height: 34px; border: 1px solid transparent; background: transparent; color: var(--texte-estompe); font-size: 20px; cursor: pointer; }
+.bouton-retirer-recette-nathalie:hover { border-color: #e6b6a7; background: #fbede7; color: #8a402c; }
+.collection-nathalie-vide { padding: 14px 0; color: var(--texte-estompe); font-size: 12px; }
+.format-recette-nathalie { max-width: 760px; padding: 13px 0; border-top: 1px solid var(--trait); color: var(--texte-estompe); font-size: 12px; line-height: 1.6; }
+.format-recette-nathalie summary { width: fit-content; color: var(--vert); cursor: pointer; }
+.format-recette-nathalie p { margin: 9px 0 0; }
+.lot-recettes-nathalie { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--trait); }
+.lot-recette-nathalie > div { display: grid; gap: 3px; }
+.lot-recette-nathalie > div > span { color: var(--texte-estompe); font-size: 10px; }
+.lot-recette-nathalie h3 { margin: 0; font-family: var(--police-serif); font-size: 19px; font-weight: 400; }
+.lot-recette-nathalie p { margin: 6px 0 0; color: var(--texte-estompe); font-size: 12px; }
+.lot-recette-nathalie h4 { margin: 16px 0 5px; font-size: 12px; }
+.lot-recette-nathalie ul, .lot-recette-nathalie ol { padding-left: 21px; margin: 5px 0 0; color: var(--encre); font-size: 12px; line-height: 1.6; }
+.lot-recette-nathalie li { padding: 2px 0; }
+.alerte-recette-nathalie { display: grid; gap: 3px; padding: 10px 12px; margin-top: 14px; border-left: 3px solid var(--corail); background: var(--surface-douce); color: var(--encre); font-size: 12px; line-height: 1.5; }
+.alerte-recette-nathalie strong { color: var(--corail); }
 .liste-recettes-nathalie { padding: 20px 0; border-top: 1px solid var(--trait); }
 .liste-recettes-nathalie > header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 18px; }
 .liste-recettes-nathalie h2 span { display: inline-grid; min-width: 25px; height: 25px; place-items: center; margin-left: 3px; border-radius: 50%; background: var(--vert-doux); color: var(--vert); font-family: var(--police-sans); font-size: 12px; vertical-align: middle; }
@@ -40,6 +100,9 @@
 @media (max-width: 560px) {
   .stockage-nathalie { align-items: stretch; flex-direction: column; }
   .stockage-nathalie > button { width: 100%; }
+  .import-word-nathalie { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 19px; }
+  .zone-depot-recette-nathalie { flex-wrap: wrap; }
+  .zone-depot-recette-nathalie > button { width: 100%; }
   .assistant-recette-nathalie { padding-top: 19px; }
   .assistant-recette-nathalie > header { gap: 9px; }
   .assistant-recette-nathalie h2 { font-size: 19px; }
